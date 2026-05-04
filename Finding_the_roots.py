@@ -134,14 +134,30 @@ if __name__ == "__main__":
     x = sympy.symbols('x')
 
     print("--- Equation Root Finder ---")
-    poly_str = input("Enter the function (e.g., cos(2*x**3 + 5*x**2 - 6) / (2*exp(-2*x))): ")
-    my_polynomial = sympy.sympify(poly_str)
+
+    # לולאת אימות קלט לפולינום
+    while True:
+        poly_str = input("Enter the function (e.g., x**3 - 3*x**2 + 2*x): ")
+        try:
+            my_polynomial = sympy.sympify(poly_str)
+
+            # בדיקה אם הביטוי הוא פולינום ביחס ל-x
+            # הערה: אם אתה רוצה לאפשר cos ו-exp כמו במטלה, בטל את ה-if הזה או שנה אותו
+            if my_polynomial.is_polynomial(x):
+                print("Valid polynomial received.")
+                break
+            else:
+                # אם המשתמש רוצה להשתמש ב-cos/exp, הוא יכול לאשר את זה כאן
+                confirm = input("This is not a strict polynomial (maybe it has cos/exp). Use anyway? (y/n): ")
+                if confirm.lower() == 'y':
+                    break
+        except Exception as e:
+            print(f"Invalid syntax: {e}. Please use * for multiplication and ** for power.")
 
     f_func, fTag_func, fTagTag_func = initializeSympyPolynomialData(my_polynomial, x)
 
     large_start = float(input("Enter start of range: "))
     large_end = float(input("Enter end of range: "))
-    # תיקון פער 2: המשתמש מגדיר את גודל המקטע לסריקה
     step = float(input("Enter the segment size for scanning (e.g., 0.1): "))
     epsilon = 0.0001
 
