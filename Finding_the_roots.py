@@ -135,33 +135,24 @@ if __name__ == "__main__":
 
     print("--- Equation Root Finder ---")
 
-    # לולאת אימות קלט לפולינום
-    while True:
-        poly_str = input("Enter the function (e.g., x**3 - 3*x**2 + 2*x): ")
-        try:
-            my_polynomial = sympy.sympify(poly_str)
-
-            # בדיקה אם הביטוי הוא פולינום ביחס ל-x
-            # הערה: אם אתה רוצה לאפשר cos ו-exp כמו במטלה, בטל את ה-if הזה או שנה אותו
-            if my_polynomial.is_polynomial(x):
-                print("Valid polynomial received.")
-                break
-            else:
-                # אם המשתמש רוצה להשתמש ב-cos/exp, הוא יכול לאשר את זה כאן
-                confirm = input("This is not a strict polynomial (maybe it has cos/exp). Use anyway? (y/n): ")
-                if confirm.lower() == 'y':
-                    break
-        except Exception as e:
-            print(f"Invalid syntax: {e}. Please use * for multiplication and ** for power.")
+    # 1. פולינום קבוע (ללא צורך בקלט מהמשתמש)
+    poly_str = "(x - 1)**2 * (x + 2)"
+    print(f"Analyzing polynomial: f(x) = {poly_str}")
+    my_polynomial = sympy.sympify(poly_str)
 
     f_func, fTag_func, fTagTag_func = initializeSympyPolynomialData(my_polynomial, x)
 
-    large_start = float(input("Enter start of range: "))
-    large_end = float(input("Enter end of range: "))
-    step = float(input("Enter the segment size for scanning (e.g., 0.1): "))
+    # 3. תחום וגודל מקטע קבועים שמותאמים לפולינום
+    large_start = -3.0
+    large_end = 3.0
+    step = 0.6  # Segment size
     epsilon = 0.0001
 
-    print("\nSelect method: 1. Bisection | 2. Newton-Raphson | 3. Secant")
+    print(f"Search range: [{large_start}, {large_end}]")
+    print(f"Scanning segment size: {step}\n")
+
+    # השארתי את הבחירה בשיטה כדי שהמרצה יוכל לבדוק את שלושתן על אותו פולינום
+    print("Select method: 1. Bisection | 2. Newton-Raphson | 3. Secant")
     choice = input("Choice: ")
 
     found_roots = []
@@ -191,7 +182,6 @@ if __name__ == "__main__":
                 root, iters = secant_method(f_func, a, b)
 
             if root is not None and not any(abs(root - r[0]) < 0.01 for r in found_roots):
-                # תיקון פער 1: שומרים את מספר האיטרציות עבור טבלת הסיכום
                 found_roots.append((root, iters, "Odd (Regular cross)"))
 
         # Check for even root at endpoints
@@ -214,7 +204,6 @@ if __name__ == "__main__":
 
             if ext_root is not None and abs(f_func(ext_root)) < epsilon:
                 if not any(abs(ext_root - r[0]) < 0.01 for r in found_roots):
-                    # תיקון פער 1: שומרים את מספר האיטרציות עבור טבלת הסיכום
                     found_roots.append((ext_root, iters, "Even (Tangent touch)"))
 
         current += step
